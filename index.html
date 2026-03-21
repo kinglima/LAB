@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LAB · Estratégia Social — Titan Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060608;--s1:#0c0c0e;--s2:#111114;--s3:#18181c;
+  --wire:#1e1e26;--wire2:#2a2a35;--dim:#3a3a48;--mist:#5a5a68;
+  --bone:#d4d0c8;--bone2:#9a9690;
+  --gold:#C8A96E;--goldf:rgba(200,169,110,.07);
+  --lab:#C4622D;--labf:rgba(196,98,45,.1);--lab2:#e07840;
+  --grn:#3a7a5e;--grnf:rgba(58,122,94,.1);
+  --blu:#4a7ab8;--bluf:rgba(74,122,184,.1);
+  --topbar:56px;--tabbar:48px;
+}
+html,body{background:var(--bg);color:var(--bone);font-family:'Jost',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+@keyframes breathe{0%,100%{opacity:.9}50%{opacity:.18}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── TOPBAR ─── */
+.tb{
+  position:sticky;top:0;z-index:200;
+  height:var(--topbar);background:var(--s1);border-bottom:1px solid var(--wire);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
+}
+.tb-avatar{width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid var(--lab);flex-shrink:0;background:#1A1410}
+.tb-avatar svg{width:34px;height:34px;display:block}
+.tb-info{flex:1;min-width:0}
+.tb-name{font-family:'Cormorant',serif;font-size:14px;font-weight:300;color:var(--bone);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-handle{font-family:'DM Mono',monospace;font-size:7px;color:var(--lab);letter-spacing:2px}
+.tb-logo{width:30px;height:30px;border-radius:5px;overflow:hidden;flex-shrink:0;background:#0a0a0a;border:1px solid var(--wire2)}
+.tb-logo svg{width:30px;height:30px;display:block}
+
+/* ─── TABBAR ─── */
+.tabbar{
+  position:sticky;top:var(--topbar);z-index:199;
+  height:var(--tabbar);background:var(--s2);border-bottom:1px solid var(--wire);
+}
+.tabbar-inner{
+  display:flex;height:100%;
+  overflow-x:auto;overflow-y:hidden;
+  padding:0 8px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.tabbar-inner::-webkit-scrollbar{display:none}
+.tab{
+  background:none;border:none;outline:none;
+  padding:0 12px;
+  flex-shrink:0;
+  min-width:44px;height:100%;
+  display:flex;align-items:center;
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--mist);white-space:nowrap;
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  transition:color .15s,border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;
+}
+.tab:active,.tab.on{color:var(--bone)}
+.tab.on{border-bottom-color:var(--lab)}
+
+/* ─── MAIN ─── */
+.main{padding:20px 16px 60px}
+@media(min-width:768px){.main{padding:28px 28px 80px;max-width:1100px;margin:0 auto}}
+
+/* ─── SECTIONS ─── */
+.sec{display:none}
+.sec.on{display:block;animation:fadeUp .2s ease}
+
+/* ─── PAGE HEADER ─── */
+.ph{margin-bottom:22px}
+.ph-tag{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:4px;color:var(--lab);text-transform:uppercase;display:block;margin-bottom:8px}
+.ph-h{font-family:'Cormorant',serif;font-size:26px;font-weight:300;letter-spacing:-.3px;margin-bottom:6px;line-height:1.2}
+.ph-h em{font-style:italic;color:var(--gold)}
+.ph-p{font-size:11px;color:var(--mist);line-height:1.7}
+@media(min-width:600px){.ph-h{font-size:32px}}
+
+/* ─── GRIDS ─── */
+.g2{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.g3{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.g5{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+@media(min-width:540px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}.g5{grid-template-columns:1fr 1fr}}
+@media(min-width:768px){.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}}
+.wgrid{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:480px){.wgrid{grid-template-columns:1fr 1fr}}
+@media(min-width:768px){.wgrid{grid-template-columns:repeat(3,1fr)}}
+
+/* ─── CARDS ─── */
+.card{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:18px;margin-bottom:12px}
+.card-h{font-family:'Cormorant',serif;font-size:17px;font-weight:300;margin-bottom:4px}
+.card-sub{font-size:9px;color:var(--mist);margin-bottom:12px;line-height:1.6}
+
+/* KPI */
+.kpi{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:14px}
+.kpi-l{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--mist);text-transform:uppercase;display:block;margin-bottom:6px}
+.kpi-v{font-family:'Cormorant',serif;font-size:30px;font-weight:300;color:var(--bone);line-height:1;display:block}
+.kpi-v.lab{color:var(--lab)}
+.kpi-s{font-size:8px;color:var(--mist);margin-top:4px;display:block;line-height:1.4}
+
+/* BLOCKS */
+.bl{background:var(--s2);border-radius:8px;padding:12px;border:1px solid var(--wire)}
+.bl-lab{background:var(--labf);border-radius:8px;padding:12px;border:1px solid rgba(196,98,45,.15)}
+.bl-gold{background:var(--goldf);border-radius:8px;padding:12px;border:1px solid rgba(200,169,110,.12)}
+
+/* UTILS */
+.lbl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:6px}
+.lbl-lab{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--lab);text-transform:uppercase;display:block;margin-bottom:6px}
+.sm{font-size:9px;color:var(--bone2);line-height:1.5}
+.sm-muted{font-size:9px;color:var(--mist);line-height:1.5}
+.row{display:flex;gap:8px;align-items:flex-start}
+.col{display:flex;flex-direction:column;gap:8px}
+.dot-lab{color:var(--lab);font-size:9px;flex-shrink:0;margin-top:2px}
+.dot-grn{color:var(--grn);font-size:9px;flex-shrink:0;margin-top:2px}
+
+/* TREND */
+.trend{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:16px}
+.trend-n{font-family:'Cormorant',serif;font-size:32px;font-weight:300;color:var(--wire2);line-height:1;margin-bottom:6px}
+.trend-name{font-size:12px;font-weight:400;color:var(--bone);margin-bottom:6px}
+.trend-desc{font-size:9px;color:var(--bone2);line-height:1.6;margin-bottom:8px}
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.5px;padding:3px 8px;border-radius:3px}
+.tag-lab{color:var(--lab);background:var(--labf);border:1px solid rgba(196,98,45,.2)}
+.opp{font-size:9px;color:var(--grn);margin-top:8px;padding:8px;background:var(--grnf);border-radius:6px;line-height:1.5}
+
+/* PILAR */
+.pilar{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:16px}
+.pilar-n{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--gold);display:block;margin-bottom:6px}
+.pilar-name{font-family:'Cormorant',serif;font-size:16px;font-weight:300;margin-bottom:4px}
+.pilar-pct{font-family:'Cormorant',serif;font-size:24px;font-weight:300;color:var(--lab);display:block;margin-bottom:6px}
+.pilar-desc{font-size:9px;color:var(--bone2);line-height:1.5;margin-bottom:8px}
+.pilar-list{list-style:none;display:flex;flex-direction:column;gap:4px}
+.pilar-list li{font-size:9px;color:var(--mist);display:flex;gap:6px}
+.pilar-list li::before{content:'→';color:var(--lab);flex-shrink:0}
+
+/* HASHTAG */
+.htags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.htag{font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);background:var(--labf);border:1px solid rgba(196,98,45,.2);padding:4px 8px;border-radius:4px}
+
+/* REEL */
+.reel{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:16px;margin-bottom:10px}
+.reel-hd{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.reel-n{font-family:'Cormorant',serif;font-size:26px;font-weight:300;color:var(--lab);flex-shrink:0;min-width:26px}
+.reel-title{font-size:12px;font-weight:400;color:var(--bone);display:block;line-height:1.4}
+.reel-meta{font-family:'DM Mono',monospace;font-size:7px;color:var(--mist);margin-top:2px;display:block}
+.reel-hook{background:var(--labf);border-radius:6px;padding:10px;margin-bottom:10px}
+.reel-hook .lbl-lab{margin-bottom:4px}
+.reel-hook p{font-size:10px;color:var(--lab2);line-height:1.5;font-style:italic}
+.reel-beats{display:flex;flex-direction:column;gap:6px}
+.beat{display:flex;gap:8px;align-items:flex-start}
+.beat-t{font-family:'DM Mono',monospace;font-size:7px;color:var(--gold);flex-shrink:0;min-width:44px;padding-top:2px}
+.beat-d{font-size:9px;color:var(--bone2);line-height:1.5}
+
+/* CALENDAR */
+.wk{margin-bottom:18px}
+.wk-lbl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:8px}
+.day{background:var(--s2);border:1px solid var(--wire);border-radius:8px;padding:10px}
+.day-name{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--mist);text-transform:uppercase;display:block;margin-bottom:5px}
+.dtype{display:inline-block;font-family:'DM Mono',monospace;font-size:6px;letter-spacing:.5px;padding:2px 6px;border-radius:3px;margin-bottom:5px}
+.dtype.reel{background:var(--bluf);color:var(--blu);border:1px solid rgba(74,122,184,.2)}
+.dtype.carr{background:var(--goldf);color:var(--gold);border:1px solid rgba(200,169,110,.2)}
+.dtype.post{background:var(--grnf);color:var(--grn);border:1px solid rgba(58,122,94,.2)}
+.day-c{font-size:9px;color:var(--bone2);line-height:1.4}
+.day-p{font-size:7px;color:var(--mist);margin-top:4px;font-family:'DM Mono',monospace}
+
+/* SCRIPT */
+.sblock{background:var(--s2);border:1px solid var(--wire);border-radius:8px;padding:14px;margin-bottom:10px}
+.sblock-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.sblock-title{font-size:12px;font-weight:400;color:var(--bone);line-height:1.4}
+.cpbtn{
+  -webkit-appearance:none;appearance:none;
+  font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;
+  padding:0 12px;height:34px;border-radius:4px;border:1px solid var(--wire2);
+  background:none;color:var(--mist);cursor:pointer;white-space:nowrap;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:color .15s,border-color .15s;
+}
+.cpbtn:active{color:var(--gold);border-color:var(--gold)}
+.cpbtn.ok{color:var(--grn);border-color:var(--grn)}
+.stext{font-size:9px;color:var(--bone2);line-height:1.8;white-space:pre-wrap}
+
+/* COMP */
+.comp{background:var(--s1);border:1px solid var(--wire);border-radius:10px;padding:16px}
+.comp-h{font-family:'DM Mono',monospace;font-size:9px;color:var(--lab);display:block;margin-bottom:3px}
+.comp-name{font-family:'Cormorant',serif;font-size:15px;font-weight:300;margin-bottom:10px}
+.comp-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.cs{background:var(--s2);border-radius:6px;padding:7px;text-align:center}
+.cs-v{font-family:'Cormorant',serif;font-size:17px;font-weight:300;display:block}
+.cs-l{font-family:'DM Mono',monospace;font-size:6px;color:var(--mist);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+.comp-txt{font-size:9px;color:var(--bone2);line-height:1.6}
+.comp-txt strong{color:var(--gold);font-weight:400}
+
+/* FOOTER */
+.footer{margin-top:32px;padding-top:14px;border-top:1px solid var(--wire);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ft-logo{width:22px;height:22px;border-radius:4px;overflow:hidden;background:#0a0a0a;border:1px solid var(--wire2);flex-shrink:0}
+.ft-logo svg{width:22px;height:22px;display:block}
+.ft-info{font-family:'DM Mono',monospace;font-size:7px;color:var(--dim);letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<!-- LOGOS (SVG symbols reutilizáveis) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="lab" viewBox="0 0 300 270">
+    <rect width="300" height="270" fill="#1A1410"/>
+    <rect x="147.5" y="62.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:0s"/>
+    <rect x="188.5" y="62.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:.55s"/>
+    <rect x="106.5" y="103.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:1.1s"/>
+    <rect x="188.5" y="103.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:1.65s"/>
+    <rect x="106.5" y="144.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:2.2s"/>
+    <rect x="147.5" y="144.5" width="5" height="5" fill="#C4622D" style="animation:breathe 6s ease-in-out infinite;animation-delay:2.75s"/>
+    <text x="109" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#C4622D">L</text>
+    <text x="150" y="113" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#C4622D">A</text>
+    <text x="191" y="154" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#C4622D">B</text>
+    <line x1="96" y1="187" x2="204" y2="187" stroke="#C4622D" stroke-width=".75" stroke-opacity=".4"/>
+    <text x="150" y="207" text-anchor="middle" font-family="Georgia,serif" font-size="9" letter-spacing="3" fill="#F8F5EE">LARISSA ARAÚJO BONZATTO</text>
+    <text x="150" y="225" text-anchor="middle" font-family="Georgia,serif" font-size="7" letter-spacing="3" fill="#C4622D" opacity=".88">ESCRITÓRIO DE ARQUITETURA</text>
+  </symbol>
+  <symbol id="titan" viewBox="0 0 800 800">
+    <rect width="800" height="800" fill="#0a0a0a"/>
+    <rect x="228" y="208" width="344" height="344" fill="none" stroke="#2e2e2e" stroke-width="1.5"/>
+    <line x1="228" y1="322.7" x2="572" y2="322.7" stroke="#2e2e2e" stroke-width="1"/>
+    <line x1="228" y1="437.3" x2="572" y2="437.3" stroke="#2e2e2e" stroke-width="1"/>
+    <line x1="342.7" y1="208" x2="342.7" y2="552" stroke="#2e2e2e" stroke-width="1"/>
+    <line x1="457.3" y1="208" x2="457.3" y2="552" stroke="#2e2e2e" stroke-width="1"/>
+    <rect x="252" y="232" width="296" height="78" fill="#f0ede8"/>
+    <rect x="352" y="310" width="96" height="218" fill="#f0ede8"/>
+    <circle cx="524" cy="252" r="22" fill="#c8a96e"/>
+  </symbol>
+</svg>
+
+<!-- TOPBAR -->
+<div class="tb">
+  <div class="tb-avatar"><svg><use href="#lab"/></svg></div>
+  <div class="tb-info">
+    <span class="tb-name">Larissa Araújo Bonzatto</span>
+    <span class="tb-handle">@arq.larissaaraujo · Abril 2026</span>
+  </div>
+  <div class="tb-logo"><svg><use href="#titan"/></svg></div>
+</div>
+
+<!-- TABBAR -->
+<div class="tabbar">
+  <div class="tabbar-inner" id="tabs">
+    <div class="tab on" data-sec="visao" role="button" tabindex="0">Visão Geral</div>
+    <div class="tab" data-sec="tendencias" role="button" tabindex="0">Tendências</div>
+    <div class="tab" data-sec="pilares" role="button" tabindex="0">Pilares</div>
+    <div class="tab" data-sec="reels" role="button" tabindex="0">Reels</div>
+    <div class="tab" data-sec="calendario" role="button" tabindex="0">Calendário</div>
+    <div class="tab" data-sec="scripts" role="button" tabindex="0">Scripts</div>
+    <div class="tab" data-sec="stories" role="button" tabindex="0">Stories</div>
+    <div class="tab" data-sec="referencias" role="button" tabindex="0">Referências</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- VISÃO GERAL -->
+<div id="visao" class="sec on">
+  <div class="ph">
+    <span class="ph-tag">Diagnóstico · Abril 2026</span>
+    <div class="ph-h">Estratégia de <em>Crescimento</em></div>
+    <p class="ph-p">Plano de conteúdo para o primeiro mês — construindo autoridade, atraindo clientes e transformando o Instagram em canal de captação real.</p>
+  </div>
+
+  <div class="g4">
+    <div class="kpi"><span class="kpi-l">Seguidores</span><span class="kpi-v lab">822</span><span class="kpi-s">Meta: +200 em 30 dias</span></div>
+    <div class="kpi"><span class="kpi-l">Posts/semana</span><span class="kpi-v">4</span><span class="kpi-s">2 reels + 1 carrossel + 1 post</span></div>
+    <div class="kpi"><span class="kpi-l">Stories/semana</span><span class="kpi-v">5</span><span class="kpi-s">Seg a Sex diariamente</span></div>
+    <div class="kpi"><span class="kpi-l">Meta alcance</span><span class="kpi-v">5k</span><span class="kpi-s">Por reel nos primeiros 7d</span></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-h">Diagnóstico do perfil</div>
+      <div class="card-sub">@arq.larissaaraujo · estado atual</div>
+      <div class="col">
+        <div class="row"><span class="dot-lab">●</span><span class="sm">822 seguidores com praticamente zero atividade — sem histórico negativo para reverter</span></div>
+        <div class="row"><span class="dot-lab">●</span><span class="sm">Identidade visual profissional entregue — base para posicionamento coeso</span></div>
+        <div class="row"><span class="dot-lab">●</span><span class="sm">Residencial e comercial em SP — mercado premium com alta demanda</span></div>
+        <div class="row"><span class="dot-grn">●</span><span class="sm">Topa aparecer nos vídeos — vantagem enorme. Arquiteta com rosto gera 3-4x mais conexão</span></div>
+        <div class="row"><span class="dot-grn">●</span><span class="sm">Momento ideal — sem vícios de conteúdo ruim, audiência nova para construir</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Estratégia do mês</div>
+      <div class="card-sub">O que construir em abril</div>
+      <div class="col">
+        <div class="bl-lab"><span class="lbl-lab">Semana 1–2</span><div style="font-size:10px;color:var(--bone);font-weight:400;margin-bottom:4px">Apresentação + Autoridade</div><span class="sm">Quem é Larissa, o que acredita. Tendências 2026. Primeiro antes/depois.</span></div>
+        <div class="bl-gold"><span class="lbl">Semana 3–4</span><div style="font-size:10px;color:var(--bone);font-weight:400;margin-bottom:4px">Processo + Captação</div><span class="sm">Como funciona trabalhar com ela, bastidores, dúvidas frequentes, CTAs para contato.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">Posicionamento recomendado</div>
+    <div class="card-sub">Onde a LAB deve estar no mercado</div>
+    <div class="g3" style="margin-bottom:0">
+      <div class="bl" style="text-align:center"><div style="font-family:'Cormorant',serif;font-size:15px;color:var(--lab);margin-bottom:5px">Narrativa Humana</div><span class="sm-muted">Arquitetura que conta a história de quem vai viver o espaço</span></div>
+      <div class="bl-lab" style="text-align:center"><div style="font-family:'Cormorant',serif;font-size:15px;color:var(--lab);margin-bottom:5px">Premium Acessível</div><span class="sm-muted">Qualidade premium com processo transparente</span></div>
+      <div class="bl" style="text-align:center"><div style="font-family:'Cormorant',serif;font-size:15px;color:var(--lab);margin-bottom:5px">SP Residencial</div><span class="sm-muted">Referência para reformas em São Paulo — local e específico</span></div>
+    </div>
+  </div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq · titanstudiohq.com.br</span></div>
+</div>
+
+<!-- TENDÊNCIAS -->
+<div id="tendencias" class="sec">
+  <div class="ph"><span class="ph-tag">Mercado · 2026</span><div class="ph-h">Tendências de <em>Arquitetura</em></div><p class="ph-p">O que está em alta em 2026 e como a LAB pode surfar cada tendência no conteúdo.</p></div>
+
+  <div class="g3">
+    <div class="trend"><div class="trend-n">01</div><div class="trend-name">Arquitetura Emocional</div><div class="trend-desc">Espaços que despertam sensações — calma, acolhimento, memória. O ambiente deixa de ser vitrine e passa a ser experiência vivida.</div><span class="tag tag-lab">Em ascensão · 2025-2026</span><div class="opp">Oportunidade: mostrar o processo de entender o cliente antes do projeto.</div></div>
+    <div class="trend"><div class="trend-n">02</div><div class="trend-name">Materiais Naturais Premium</div><div class="trend-desc">Madeiras escuras, pedra natural, cimento aparente, superfícies foscas. Tons terrosos e quentes dominam. O branco frio perdeu força.</div><span class="tag tag-lab">Mainstream · 2026</span><div class="opp">Oportunidade: carrosséis de paletas de materiais e texturas em projetos reais.</div></div>
+    <div class="trend"><div class="trend-n">03</div><div class="trend-name">Design Biofílico Integrado</div><div class="trend-desc">Natureza como princípio do projeto, não decoração. Jardins verticais, luz orientada, fluídez interior-exterior.</div><span class="tag tag-lab">Crescimento · 2026</span><div class="opp">Oportunidade: reels sobre como integrar natureza em apartamentos pequenos.</div></div>
+    <div class="trend"><div class="trend-n">04</div><div class="trend-name">Memória e Identidade</div><div class="trend-desc">Cansaço do morar padronizado. Peças garimpadas, objetos afetivos, móveis com história. O lar como extensão da identidade.</div><span class="tag tag-lab">Emergente forte</span><div class="opp">Oportunidade: "como a sua história aparece no seu espaço" — gancho emocional forte.</div></div>
+    <div class="trend"><div class="trend-n">05</div><div class="trend-name">Tecnologia Discreta</div><div class="trend-desc">Automação e eficiência energética integradas sem aparecer. A tecnologia serve ao espaço, não compete com ele.</div><span class="tag tag-lab">Mainstream · 2026</span><div class="opp">Oportunidade: mostrar automação residencial na prática — gera salvamentos.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">Estética em alta no segmento</div>
+    <div class="card-sub">O que está performando visualmente em arquitetura</div>
+    <div class="g3" style="margin-bottom:0">
+      <div class="bl"><span class="lbl">Paleta dominante</span><div style="display:flex;gap:5px;margin-bottom:7px"><div style="width:18px;height:18px;border-radius:3px;background:#8B6F5E"></div><div style="width:18px;height:18px;border-radius:3px;background:#D4C4B0"></div><div style="width:18px;height:18px;border-radius:3px;background:#3D3229"></div><div style="width:18px;height:18px;border-radius:3px;background:#C4622D"></div></div><span class="sm-muted">Terrosos quentes, carvão, terracota e off-white creme.</span></div>
+      <div class="bl"><span class="lbl">Fotografia</span><span class="sm-muted">Luz natural, editorial, sem filtros saturados. Detalhes de materiais em close. Pessoas nos espaços.</span></div>
+      <div class="bl"><span class="lbl">Formato</span><span class="sm-muted">Reels de processo superam fotos. Carrosséis educativos com alto índice de salvamento. Voz off humaniza.</span></div>
+    </div>
+  </div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- PILARES -->
+<div id="pilares" class="sec">
+  <div class="ph"><span class="ph-tag">Estratégia de Conteúdo</span><div class="ph-h">Pilares <em>Editoriais</em></div><p class="ph-p">5 eixos temáticos que garantem variedade, consistência e crescimento.</p></div>
+
+  <div class="g5">
+    <div class="pilar"><span class="pilar-n">Pilar 01</span><div class="pilar-name">Autoridade</div><span class="pilar-pct">30%</span><div class="pilar-desc">Demonstra expertise. Torna Larissa referência no segmento.</div><ul class="pilar-list"><li>Tendências 2026</li><li>Erros em reforma</li><li>Escolha de materiais</li><li>O que ninguém conta</li></ul></div>
+    <div class="pilar"><span class="pilar-n">Pilar 02</span><div class="pilar-name">Processo</div><span class="pilar-pct">25%</span><div class="pilar-desc">Humaniza. Mostra como é trabalhar com a LAB.</div><ul class="pilar-list"><li>Bastidores de projeto</li><li>Antes e durante obra</li><li>Como funciona o briefing</li><li>Um dia no escritório</li></ul></div>
+    <div class="pilar"><span class="pilar-n">Pilar 03</span><div class="pilar-name">Resultado</div><span class="pilar-pct">20%</span><div class="pilar-desc">Converte. Antes/depois é o formato mais poderoso.</div><ul class="pilar-list"><li>Antes e depois</li><li>Detalhe de acabamento</li><li>Reação do cliente</li><li>Tour pelo projeto</li></ul></div>
+    <div class="pilar"><span class="pilar-n">Pilar 04</span><div class="pilar-name">Inspiração</div><span class="pilar-pct">15%</span><div class="pilar-desc">Alcance. Conteúdo salvo e compartilhado.</div><ul class="pilar-list"><li>Paletas de materiais</li><li>Referências</li><li>Ambientes dos sonhos</li><li>Tendências visuais</li></ul></div>
+    <div class="pilar"><span class="pilar-n">Pilar 05</span><div class="pilar-name">Conexão</div><span class="pilar-pct">10%</span><div class="pilar-desc">Engajamento. Larissa como pessoa.</div><ul class="pilar-list"><li>Por que virei arquiteta</li><li>O que me inspira</li><li>Minha visão de SP</li><li>Perguntas e respostas</li></ul></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">Hashtags estratégicas</div>
+    <div class="card-sub">3 camadas — usar combinação das três em cada post</div>
+    <div style="margin-bottom:12px"><span class="lbl">Nicho específico</span><div class="htags"><span class="htag">#arquiteturasp</span><span class="htag">#arquitetosaopaulo</span><span class="htag">#designdeinterioressp</span><span class="htag">#reformaresidencial</span><span class="htag">#interioressp</span></div></div>
+    <div style="margin-bottom:12px"><span class="lbl">Volume médio</span><div class="htags"><span class="htag">#arquiteturabrasileira</span><span class="htag">#designdeinteriores</span><span class="htag">#decoracaodeinteriores</span><span class="htag">#reforma</span><span class="htag">#casadobrasil</span></div></div>
+    <div><span class="lbl">Tendência 2026</span><div class="htags"><span class="htag">#interiores2026</span><span class="htag">#designbiofílico</span><span class="htag">#arquiteturaemocional</span><span class="htag">#materiaisnaturais</span></div></div>
+  </div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- REELS -->
+<div id="reels" class="sec">
+  <div class="ph"><span class="ph-tag">Vídeo · Roteiros</span><div class="ph-h">Reels do <em>Mês</em></div><p class="ph-p">5 roteiros prontos para gravar. Gancho, estrutura e CTA definidos.</p></div>
+
+  <div class="reel"><div class="reel-hd"><div class="reel-n">01</div><div><span class="reel-title">Apresentação — Quem é Larissa e o que a LAB faz</span><span class="reel-meta">30-45s · Conexão · Semana 1</span></div></div><div class="reel-hook"><div class="lbl-lab">Gancho — primeiros 3s</div><p>"Se você está pensando em reformar em SP, para tudo e assiste esse vídeo primeiro."</p></div><div class="reel-beats"><div class="beat"><span class="beat-t">00–03s</span><span class="beat-d">Gancho direto para câmera, no escritório ou em obra.</span></div><div class="beat"><span class="beat-t">03–10s</span><span class="beat-d">"Sou a Larissa — arquiteta em SP. Há X anos ajudo pessoas a transformar espaços em algo que conta quem elas são."</span></div><div class="beat"><span class="beat-t">10–25s</span><span class="beat-d">Mostrar 3 projetos em cortes rápidos enquanto fala dos serviços.</span></div><div class="beat"><span class="beat-t">25–35s</span><span class="beat-d">"O que me move não é só o projeto bonito. É entender sua história antes de qualquer risca no papel."</span></div><div class="beat"><span class="beat-t">35–45s</span><span class="beat-d">CTA: "Me chama no direct. Primeiros 15 minutos de conversa são meus."</span></div></div></div>
+
+  <div class="reel"><div class="reel-hd"><div class="reel-n">02</div><div><span class="reel-title">5 tendências de arquitetura que vão dominar SP em 2026</span><span class="reel-meta">45-60s · Autoridade · Semana 1</span></div></div><div class="reel-hook"><div class="lbl-lab">Gancho</div><p>"Em 2026 essas 5 tendências vão dominar os projetos em SP — e a maioria ainda não sabe."</p></div><div class="reel-beats"><div class="beat"><span class="beat-t">00–03s</span><span class="beat-d">Gancho falado para câmera.</span></div><div class="beat"><span class="beat-t">03–45s</span><span class="beat-d">5 tendências em lista rápida com imagem de referência: terrosos, biofilia, tecnologia discreta, espaços sensoriais, memória afetiva.</span></div><div class="beat"><span class="beat-t">45–60s</span><span class="beat-d">CTA: "Salva esse vídeo pra quando for reformar. Qual você mais gostou? Comenta aqui."</span></div></div></div>
+
+  <div class="reel"><div class="reel-hd"><div class="reel-n">03</div><div><span class="reel-title">O erro mais caro que quem vai reformar comete</span><span class="reel-meta">30-45s · Autoridade · Semana 2</span></div></div><div class="reel-hook"><div class="lbl-lab">Gancho</div><p>"Esse erro já custou mais de R$ 50 mil pra quem fez reforma em SP sem saber disso."</p></div><div class="reel-beats"><div class="beat"><span class="beat-t">00–03s</span><span class="beat-d">Gancho com número impactante.</span></div><div class="beat"><span class="beat-t">03–20s</span><span class="beat-d">O erro: comprar materiais antes de ter o projeto aprovado. Por que gera retrabalho e desperdício.</span></div><div class="beat"><span class="beat-t">20–35s</span><span class="beat-d">A solução: projeto antes de compra. Como funciona o processo correto.</span></div><div class="beat"><span class="beat-t">35–45s</span><span class="beat-d">CTA: "Manda esse vídeo pra alguém que tá pensando em reformar."</span></div></div></div>
+
+  <div class="reel"><div class="reel-hd"><div class="reel-n">04</div><div><span class="reel-title">Antes e depois — projeto real</span><span class="reel-meta">30-45s · Resultado · Semana 2</span></div></div><div class="reel-hook"><div class="lbl-lab">Gancho — adaptar com projeto real</div><p>"Esse espaço era [descrição do antes]. Olha o que fizemos em [X meses]."</p></div><div class="reel-beats"><div class="beat"><span class="beat-t">00–03s</span><span class="beat-d">Foto do antes enquanto Larissa faz o gancho.</span></div><div class="beat"><span class="beat-t">03–15s</span><span class="beat-d">Contexto: o que o cliente queria, quais eram os desafios.</span></div><div class="beat"><span class="beat-t">15–35s</span><span class="beat-d">Reveal do depois em cortes editados com trilha. Detalhes de materiais e acabamentos.</span></div><div class="beat"><span class="beat-t">35–45s</span><span class="beat-d">CTA: "Quer saber como seria no seu espaço? Me chama no direct."</span></div></div></div>
+
+  <div class="reel"><div class="reel-hd"><div class="reel-n">05</div><div><span class="reel-title">Como escolher a paleta de materiais certa</span><span class="reel-meta">45s · Autoridade + Inspiração · Semana 3</span></div></div><div class="reel-hook"><div class="lbl-lab">Gancho</div><p>"A maioria das pessoas escolhe material errado porque ninguém ensinou isso pra elas."</p></div><div class="reel-beats"><div class="beat"><span class="beat-t">00–03s</span><span class="beat-d">Gancho com amostras de materiais visíveis na mesa.</span></div><div class="beat"><span class="beat-t">03–35s</span><span class="beat-d">3 regras: temperatura de cor consistente, textura como protagonista, máximo 3 materiais por ambiente.</span></div><div class="beat"><span class="beat-t">35–45s</span><span class="beat-d">CTA: "Salva isso pra quando for comprar material. Quer um olhar profissional? Me chama."</span></div></div></div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- CALENDÁRIO -->
+<div id="calendario" class="sec">
+  <div class="ph"><span class="ph-tag">Planejamento · Abril 2026</span><div class="ph-h">Calendário <em>Editorial</em></div><p class="ph-p">4 semanas planejadas. 4 posts + 5 stories por semana.</p></div>
+
+  <div class="wk"><span class="wk-lbl">Semana 1 — Apresentação e Autoridade</span><div class="wgrid"><div class="day"><span class="day-name">Segunda</span><span class="dtype reel">Reel</span><div class="day-c">Apresentação — Quem é Larissa e o que a LAB faz</div><div class="day-p">Pilar: Conexão</div></div><div class="day"><span class="day-name">Quarta</span><span class="dtype carr">Carrossel</span><div class="day-c">5 tendências de arquitetura em SP para 2026</div><div class="day-p">Pilar: Autoridade</div></div><div class="day"><span class="day-name">Sexta</span><span class="dtype reel">Reel</span><div class="day-c">Tendências 2026 — versão falada com aplicações reais</div><div class="day-p">Pilar: Autoridade</div></div></div></div>
+
+  <div class="wk"><span class="wk-lbl">Semana 2 — Processo e Resultados</span><div class="wgrid"><div class="day"><span class="day-name">Segunda</span><span class="dtype reel">Reel</span><div class="day-c">O erro mais caro em reforma — alto potencial de compartilhamento</div><div class="day-p">Pilar: Autoridade</div></div><div class="day"><span class="day-name">Quarta</span><span class="dtype post">Post</span><div class="day-c">Antes/depois de projeto entregue — foto + legenda narrativa</div><div class="day-p">Pilar: Resultado</div></div><div class="day"><span class="day-name">Sexta</span><span class="dtype carr">Carrossel</span><div class="day-c">Bastidores de projeto — do briefing à entrega em 6 slides</div><div class="day-p">Pilar: Processo</div></div></div></div>
+
+  <div class="wk"><span class="wk-lbl">Semana 3 — Educação e Inspiração</span><div class="wgrid"><div class="day"><span class="day-name">Segunda</span><span class="dtype reel">Reel</span><div class="day-c">Como escolher paleta de materiais — dica rápida e aplicável</div><div class="day-p">Pilar: Autoridade</div></div><div class="day"><span class="day-name">Quarta</span><span class="dtype carr">Carrossel</span><div class="day-c">Paleta de materiais 2026 — tons terrosos e texturas naturais</div><div class="day-p">Pilar: Inspiração</div></div><div class="day"><span class="day-name">Sexta</span><span class="dtype reel">Reel</span><div class="day-c">Tour por projeto residencial entregue com narração</div><div class="day-p">Pilar: Resultado</div></div></div></div>
+
+  <div class="wk"><span class="wk-lbl">Semana 4 — Captação e Conversão</span><div class="wgrid"><div class="day"><span class="day-name">Segunda</span><span class="dtype carr">Carrossel</span><div class="day-c">O que acontece quando você contrata um arquiteto</div><div class="day-p">Pilar: Processo</div></div><div class="day"><span class="day-name">Quarta</span><span class="dtype reel">Reel</span><div class="day-c">Perguntas frequentes sobre reforma em SP — formato Q&amp;A</div><div class="day-p">Pilar: Autoridade</div></div><div class="day"><span class="day-name">Sexta</span><span class="dtype post">Post</span><div class="day-c">Foto de projeto com CTA direto — fechamento do mês</div><div class="day-p">Pilar: Resultado</div></div></div></div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- SCRIPTS -->
+<div id="scripts" class="sec">
+  <div class="ph"><span class="ph-tag">Copy · Legendas</span><div class="ph-h">Scripts e <em>Legendas</em></div><p class="ph-p">Textos prontos para usar. Copie, adapte com detalhes reais e publique.</p></div>
+
+  <div class="sblock"><div class="sblock-hd"><span class="sblock-title">Legenda — Post de Apresentação</span><button class="cpbtn" onclick="cp(this,'t1')">Copiar</button></div><span class="lbl-lab">Feed · Apresentação</span><div class="stext" id="t1">Há anos eu ouço a mesma coisa dos meus clientes: "eu queria que minha casa fosse diferente, mas não sabia como chegar lá."
+
+É exatamente isso que eu faço.
+
+Sou a Larissa — arquiteta em São Paulo, especializada em projetos residenciais e comerciais que contam a história de quem vai viver naquele espaço.
+
+Não começo o projeto pelo papel. Começo pelas pessoas.
+
+Se você está pensando em reformar, construir ou transformar um ambiente — me chama. Os primeiros 15 minutos de conversa são por minha conta.
+
+📍 São Paulo, SP
+→ Link na bio para agendar uma conversa</div></div>
+
+  <div class="sblock"><div class="sblock-hd"><span class="sblock-title">Legenda — Carrossel de Tendências</span><button class="cpbtn" onclick="cp(this,'t2')">Copiar</button></div><span class="lbl-lab">Feed · Carrossel (deslize →)</span><div class="stext" id="t2">Em 2026, a arquitetura de interiores em SP passou por uma virada silenciosa.
+
+Menos branco. Mais textura.
+Menos objeto. Mais intenção.
+Menos decoração. Mais memória.
+
+Selecionei as 5 tendências que estão chegando com tudo — e que você pode aplicar em qualquer espaço.
+
+Deslize para ver cada uma →
+
+Salva esse post pra quando for reformar.
+
+Qual tendência mais combina com você? Comenta aqui 👇</div></div>
+
+  <div class="sblock"><div class="sblock-hd"><span class="sblock-title">Legenda — Antes e Depois</span><button class="cpbtn" onclick="cp(this,'t3')">Copiar</button></div><span class="lbl-lab">Feed · Adaptar com dados reais</span><div class="stext" id="t3">Esse [tipo de espaço] tinha [desafio do ambiente].
+
+O cliente queria [o que ele pediu]. Mas o que ele precisava era [o que você percebeu além do pedido].
+
+O resultado: [descrever em 1 frase o que ficou].
+
+Cada material foi escolhido com intenção. [Detalhe específico que você ama no projeto e por quê].
+
+Isso é o que eu chamo de arquitetura que permanece.
+
+→ Quer saber como seria no seu espaço? Link na bio.</div></div>
+
+  <div class="sblock"><div class="sblock-hd"><span class="sblock-title">Script — Reel de Apresentação (fala completa)</span><button class="cpbtn" onclick="cp(this,'t4')">Copiar</button></div><span class="lbl-lab">Reel · 30-45s · Falar para câmera</span><div class="stext" id="t4">[GANCHO — olhando direto pra câmera]
+"Se você está pensando em reformar em São Paulo, para tudo e assiste esse vídeo primeiro."
+
+[APRESENTAÇÃO]
+"Sou a Larissa, arquiteta em SP. Há [X] anos eu transformo espaços em ambientes que contam a história de quem vive neles."
+
+[MOSTRAR PROJETOS em cortes rápidos]
+"Faço residencial, comercial e design de interiores. Mas o que me diferencia não é o estilo — é o processo. Antes de qualquer projeto, eu entendo você."
+
+[CALL TO ACTION]
+"Se você tem um espaço que quer transformar, me chama no direct. Primeiros 15 minutos de conversa são por minha conta."
+
+[TEXTO NA TELA]: @arq.larissaaraujo · DM aberto</div></div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- STORIES -->
+<div id="stories" class="sec">
+  <div class="ph"><span class="ph-tag">Stories · Rotina</span><div class="ph-h">Estratégia de <em>Stories</em></div><p class="ph-p">5 stories por semana que mantêm o perfil aquecido e o algoritmo favorável.</p></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-h">Rotina semanal</div>
+      <div class="card-sub">O que postar em cada dia</div>
+      <div class="col">
+        <div class="bl"><div style="display:flex;gap:8px;align-items:center"><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);min-width:30px">SEG</span><div><div style="font-size:10px;color:var(--bone)">Bastidores da semana</div><span class="sm-muted">Obra, reunião, projeto em andamento</span></div></div></div>
+        <div class="bl"><div style="display:flex;gap:8px;align-items:center"><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);min-width:30px">TER</span><div><div style="font-size:10px;color:var(--bone)">Caixinha de perguntas</div><span class="sm-muted">"Sua dúvida sobre reforma ou arquitetura"</span></div></div></div>
+        <div class="bl"><div style="display:flex;gap:8px;align-items:center"><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);min-width:30px">QUA</span><div><div style="font-size:10px;color:var(--bone)">Detalhe de projeto</div><span class="sm-muted">Close em material com legenda explicando a escolha</span></div></div></div>
+        <div class="bl"><div style="display:flex;gap:8px;align-items:center"><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);min-width:30px">QUI</span><div><div style="font-size:10px;color:var(--bone)">Enquete ou quiz</div><span class="sm-muted">"Qual você prefere? A ou B" — paletas, estilos</span></div></div></div>
+        <div class="bl"><div style="display:flex;gap:8px;align-items:center"><span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--lab);min-width:30px">SEX</span><div><div style="font-size:10px;color:var(--bone)">Repost do post da semana</div><span class="sm-muted">Com CTA para salvar ou comentar</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Stories de captação</div>
+      <div class="card-sub">Usar 1x por semana para gerar contato</div>
+      <div class="col">
+        <div class="bl-lab"><span class="lbl-lab">Modelo A — Pergunta direta</span><span class="sm" style="font-style:italic">"Você está pensando em reformar em 2026? Me responde que te mando um roteiro gratuito de como começar sem errar."</span></div>
+        <div class="bl-gold"><span class="lbl">Modelo B — Oferta de valor</span><span class="sm" style="font-style:italic">"Essa semana tenho 2 vagas para conversa de 15 minutos sobre seu projeto — sem compromisso. Quer uma?"</span></div>
+        <div class="bl"><span class="lbl" style="color:var(--mist)">Modelo C — Prova social</span><span class="sm" style="font-style:italic">"[Nome] me mandou isso hoje [print]. É por isso que faço esse trabalho. Quer o mesmo? Link na bio."</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq</span></div>
+</div>
+
+<!-- REFERÊNCIAS -->
+<div id="referencias" class="sec">
+  <div class="ph"><span class="ph-tag">Benchmarking</span><div class="ph-h">Referências de <em>Mercado</em></div><p class="ph-p">Perfis de referência no Instagram de arquitetura em SP — o que aprender e como se diferenciar.</p></div>
+
+  <div class="g2">
+    <div class="comp"><span class="comp-h">@domaarquitetura</span><div class="comp-name">Arq. Patricia Pomerantzeff</div><div class="comp-stats"><div class="cs"><span class="cs-v">1M</span><span class="cs-l">Seguidores</span></div><div class="cs"><span class="cs-v">4.2k</span><span class="cs-l">Posts</span></div></div><div class="comp-txt"><strong>O que funciona:</strong> Consistência massiva há anos. Rosto presente. Carrosséis educativos performam muito bem.<br><br><strong>Aprender:</strong> Consistência acima de frequência.<br><br><strong>Diferenciar:</strong> LAB pode ser mais íntima — Doma é grande demais para conexão real.</div></div>
+    <div class="comp"><span class="comp-h">@peninsulaarquitetura</span><div class="comp-name">Península Arquitetura</div><div class="comp-stats"><div class="cs"><span class="cs-v">82k</span><span class="cs-l">Seguidores</span></div><div class="cs"><span class="cs-l">SP · Premium</span></div></div><div class="comp-txt"><strong>O que funciona:</strong> Fotografia editorial de altíssima qualidade. Grid muito coeso.<br><br><strong>Aprender:</strong> Padrão visual nas fotos — cada uma parece revista.<br><br><strong>Diferenciar:</strong> Larissa pode ter a qualidade deles + personalidade humana real.</div></div>
+    <div class="comp"><span class="comp-h">@sp.arq</span><div class="comp-name">Patricia Bacellar — SP Arq</div><div class="comp-stats"><div class="cs"><span class="cs-v">3.2k</span><span class="cs-l">Seguidores</span></div><div class="cs"><span class="cs-l">SP · Similar</span></div></div><div class="comp-txt"><strong>Concorrente direto:</strong> Porte similar, mesmo mercado SP. Sem estratégia consistente.<br><br><strong>Oportunidade:</strong> 4x à frente mas sem estratégia — LAB pode ultrapassar em 3 meses.<br><br><strong>Diferenciar:</strong> Identidade visual superior + estratégia. Use isso.</div></div>
+    <div class="comp"><span class="comp-h">@sala2arquitetura</span><div class="comp-name">SALA2 Arquitetura</div><div class="comp-stats"><div class="cs"><span class="cs-v">143k</span><span class="cs-l">Seguidores</span></div><div class="cs"><span class="cs-v">2.5k</span><span class="cs-l">Posts</span></div></div><div class="comp-txt"><strong>O que funciona:</strong> Volume alto, diversidade de conteúdo.<br><br><strong>Aprender:</strong> Variedade — projetos, processo, bastidores, educativo.<br><br><strong>Diferenciar:</strong> Larissa é uma pessoa, não um escritório anônimo. <em>People connect with people.</em></div></div>
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="card-h">Espaço em branco — onde a LAB pode ser única</div>
+    <div class="card-sub">O que nenhum desses perfis está fazendo bem</div>
+    <div class="g3" style="margin-bottom:0">
+      <div class="bl-lab"><div style="font-size:11px;font-weight:400;color:var(--bone);margin-bottom:5px">Narrativa pessoal</div><span class="sm-muted">Larissa como personagem — visão, história, por que acredita no que faz. Ninguém faz com profundidade.</span></div>
+      <div class="bl-gold"><div style="font-size:11px;font-weight:400;color:var(--bone);margin-bottom:5px">Educação sobre o processo</div><span class="sm-muted">Como contratar arquiteto, o que esperar, quanto custa. Conteúdo que o cliente quer mas não encontra.</span></div>
+      <div class="bl"><div style="font-size:11px;font-weight:400;color:var(--bone);margin-bottom:5px">SP como contexto real</div><span class="sm-muted">Reformar em SP — desafios locais, fornecedores, timing. Grandes escritórios não fazem conteúdo assim.</span></div>
+    </div>
+  </div>
+
+  <div class="footer"><div class="ft-logo"><svg><use href="#titan"/></svg></div><span class="ft-info">Titan Studio · @titanstudiohq · titanstudiohq.com.br · (11) 96428-4175</span></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function goTab(id) {
+  var tabs = document.querySelectorAll('.tab');
+  var secs = document.querySelectorAll('.sec');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('on');
+  for (var i = 0; i < secs.length; i++) secs[i].classList.remove('on');
+  var tabEl = document.querySelector('[data-sec="' + id + '"]');
+  var secEl = document.getElementById(id);
+  if (tabEl) { tabEl.classList.add('on'); tabEl.scrollIntoView({block:'nearest',inline:'center'}); }
+  if (secEl) secEl.classList.add('on');
+  window.scrollTo(0, 0);
+}
+window.onload = function() {
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].setAttribute('onclick', 'goTab("' + tabs[i].getAttribute('data-sec') + '")');
+  }
+};
+
+function cp(btn, id) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  var text = el.textContent || el.innerText || '';
+  text = text.trim();
+
+  function done() {
+    btn.textContent = 'Copiado!';
+    btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 2000);
+  }
+
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(function(){fallback(text,done);});
+  } else {
+    fallback(text, done);
+  }
+}
+
+function fallback(text, cb) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e){}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
